@@ -576,7 +576,10 @@
     <p>© All artworks displayed on this website belong to Skvllr. All rights reserved. Do not copy or redistribute without permission.</p>
   </footer>
 
-  <!-- SKRYPTY (MOTYW + SERDUSZKA) -->
+  <!-- Biblioteki Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 <script>
   // PRZEŁĄCZANIE MOTYWU (LIGHT / DARK)
   function toggleTheme(checkbox) {
@@ -587,69 +590,50 @@
     }
   }
 
-  // SYSTEM SERDUSZEK - UNIWERSALNE BEZAWARYJNE API
+  // CONFIG FIREBASE (TWOJE DANE)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBNBp-SFEWSfrexseHU6bBOsg1b5Hj5oAk",
+    authDomain: "skvllr-portfolio.firebaseapp.com",
+    databaseURL: "https://skvllr-portfolio-default-rtdb.firebaseio.com",
+    projectId: "skvllr-portfolio",
+    storageBucket: "skvllr-portfolio.firebasestorage.app",
+    messagingSenderId: "604962724103",
+    appId: "1:604962724103:web:412a3c4b723d7f2a5d0da2",
+    measurementId: "G-GLJTKPELRF"
+  };
+
+  // Inicjalizacja Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const likesRef = db.ref('likes');
+
   const STORAGE_KEY = "has_liked_skvllr_art";
   const likeBtn = document.getElementById("likeBtn");
   const likeCount = document.getElementById("likeCount");
 
-  // Unikalna nazwa Twojego licznika (możesz wpisać cokolwiek unikalnego)
-  const namespace = "skvllr-art-portfolio-v1";
-  const key = "likes";
+  // ODCZYT POLUBIEŃ NA ŻYWO Z GOOGLE FIREBASE
+  likesRef.on('value', (snapshot) => {
+    const val = snapshot.val();
+    likeCount.innerText = val !== null ? val : 0;
+  });
 
-  // Pobieranie aktualnej liczby serduszek
-  async function fetchLikes() {
-    try {
-      const res = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
-      if (res.ok) {
-        const data = await res.json();
-        likeCount.innerText = data.value;
-      } else {
-        // Jeśli nie istnieje – tworzymy z wartością 0
-        const createRes = await fetch(`https://api.countapi.xyz/create?namespace=${namespace}&key=${key}&value=0`);
-        const createData = await createRes.json();
-        likeCount.innerText = createData.value || 0;
-      }
-    } catch (e) {
-      // Rezerwowy serwer (działa jeśli podstawowy ma przestój)
-      try {
-        const fallbackRes = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`);
-        if (fallbackRes.ok) {
-          const fallbackData = await fallbackRes.json();
-          likeCount.innerText = fallbackData.count || 0;
-        }
-      } catch (err) {
-        likeCount.innerText = "0";
-      }
-    }
-
-    // Blokada ponownego głosowania jeśli już kliknięto na tym urządzeniu
-    if (localStorage.getItem(STORAGE_KEY)) {
-      setLikedState();
-    }
+  // SPRAWDZENIE CZY UŻYTKOWNIK JUŻ KLIKAŁ
+  if (localStorage.getItem(STORAGE_KEY)) {
+    setLikedState();
   }
 
-  // Dodawanie serduszka
-  async function addLike() {
+  // DODAWANIE POLUBIENIA
+  function addLike() {
     if (localStorage.getItem(STORAGE_KEY)) return;
 
-    try {
-      const res = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
-      if (res.ok) {
-        const data = await res.json();
-        likeCount.innerText = data.value;
-      } else {
-        // Rezerwowe zwiększenie licznika
-        const fallbackRes = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`);
-        const fallbackData = await fallbackRes.json();
-        likeCount.innerText = fallbackData.count;
+    likesRef.transaction((currentLikes) => {
+      return (currentLikes || 0) + 1;
+    }, (error, committed) => {
+      if (committed) {
+        localStorage.setItem(STORAGE_KEY, "true");
+        setLikedState();
       }
-
-      // Zapamiętaj głos w przeglądarce
-      localStorage.setItem(STORAGE_KEY, "true");
-      setLikedState();
-    } catch (e) {
-      console.error("Błąd zapisywania serduszka:", e);
-    }
+    });
   }
 
   function setLikedState() {
@@ -657,9 +641,6 @@
     likeBtn.classList.add("liked");
     likeBtn.onclick = null;
   }
-
-  // Uruchom od razu
-  fetchLikes();
 </script>
 </body>
 </html>
