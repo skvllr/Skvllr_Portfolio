@@ -57,6 +57,7 @@
       border-bottom: 2px solid var(--border-color);
       text-align: center;
       padding: 0 15px;
+      overflow: hidden; /* Działa jako pojemnik na konfetti */
     }
     header h1 {
       font-size: 2.5rem;
@@ -72,23 +73,19 @@
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
     }
 
-    /* KONTENER STATYSTYK (SERDUSZKO + WYŚWIETLENIA) */
-    .stats-container {
+    /* KONTENER SERDUSZKA W BANNERZE */
+    .like-container {
       position: absolute;
       right: 20px;
       bottom: 15px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       background: rgba(0, 0, 0, 0.6);
       padding: 8px 15px;
       border-radius: 20px;
       border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .stat-box {
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      z-index: 2;
     }
     .like-btn {
       background: none;
@@ -103,14 +100,66 @@
     .like-btn.liked {
       cursor: default;
     }
-    .stat-count {
+    .like-count {
       font-weight: bold;
       color: #ffffff;
       font-size: 0.9rem;
     }
-    .stat-divider {
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 0.8rem;
+
+    /* DYMEK Z ZACHĘTĄ NAD SERDUSZKIEM */
+    .like-tooltip {
+      position: absolute;
+      bottom: 60px;
+      right: 20px;
+      background: rgba(18, 18, 20, 0.9);
+      color: #ffffff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 3;
+    }
+    .like-tooltip::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      right: 20px;
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid rgba(18, 18, 20, 0.9);
+    }
+    .like-tooltip.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* EFEKT CZĄSTECZEK (KONFETTI) SERDUSZEK */
+    .heart-particle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1rem;
+      user-select: none;
+      animation: floatUpAndFade 1s ease-out forwards;
+      z-index: 10;
+    }
+    @keyframes floatUpAndFade {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(0.8) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(1.4) rotate(var(--rot));
+      }
     }
 
     /* KONTENER GŁÓWNY */
@@ -120,12 +169,24 @@
       padding: 20px 20px 30px 20px;
     }
 
-    /* PASEK Z PRZEŁĄCZNIKIEM MOTYWU POD BANNEREM */
+    /* PASEK ZE ZMIANĄ MOTYWU I DYSKRETNYM LICZNIKIEM ODWIEDZIN */
     .toolbar {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+    }
+    .view-count-wrapper {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.3px;
+    }
+    .view-count-icon {
+      font-size: 0.85rem;
+      opacity: 0.7;
     }
     .theme-switch-wrapper {
       display: flex;
@@ -407,10 +468,15 @@
       header p {
         font-size: 0.8rem;
       }
-      .stats-container {
+      .like-container {
         right: 10px;
         bottom: 10px;
         padding: 5px 10px;
+      }
+      .like-tooltip {
+        right: 10px;
+        bottom: 50px;
+        font-size: 0.7rem;
       }
       .profile-section {
         grid-template-columns: 1fr;
@@ -434,32 +500,32 @@
 </head>
 <body>
 
-  <!-- HEADER Z SERDUSZKIEM I LICZNIKIEM WYŚWIETLEŃ -->
-  <header>
+  <!-- HEADER Z SERDUSZKIEM I DYMKIEM INFROMACYJNYM -->
+  <header id="header">
     <h1>PORTFOLIO</h1>
     <p>SKVLLR • ARTIST & 2D ANIMATOR</p>
 
-    <div class="stats-container">
-      <!-- WYŚWIETLENIA -->
-      <div class="stat-box" title="Total Page Views">
-        <span>👁️</span>
-        <span class="stat-count" id="viewCount">...</span>
-      </div>
+    <!-- DYMEK INFROMACYJNY NAD SERCEM -->
+    <div class="like-tooltip" id="likeTooltip">
+      drop a heart if u like my art! ♡
+    </div>
 
-      <span class="stat-divider">|</span>
-
-      <!-- POLUBIENIA -->
-      <div class="stat-box" title="Likes">
-        <button class="like-btn" id="likeBtn" onclick="addLike()">🤍</button>
-        <span class="stat-count" id="likeCount">...</span>
-      </div>
+    <!-- PRZYCISK SERDUSZKA -->
+    <div class="like-container" id="likeContainer">
+      <button class="like-btn" id="likeBtn" onclick="addLike(event)">🤍</button>
+      <span class="like-count" id="likeCount">...</span>
     </div>
   </header>
 
   <div class="container">
     
-    <!-- PASEK PRZEŁĄCZNIKA MOTYWU (SUWAK) -->
+    <!-- PASEK TOOLBAR: LICZNIK ODWIEDZIN PO LEWEJ + PRZEŁĄCZNIK MOTYWU PO PRAWEJ -->
     <div class="toolbar">
+      <div class="view-count-wrapper" title="Total Page Views">
+        <span class="view-count-icon">👁</span>
+        <span id="viewCount">...</span> views
+      </div>
+
       <div class="theme-switch-wrapper">
         <span>☀︎</span>
         <label class="theme-switch" for="themeToggle">
@@ -665,6 +731,8 @@
     const likeBtn = document.getElementById("likeBtn");
     const likeCount = document.getElementById("likeCount");
     const viewCount = document.getElementById("viewCount");
+    const likeTooltip = document.getElementById("likeTooltip");
+    const headerEl = document.getElementById("header");
 
     // 1. ZWIĘKSZANIE I ODCZYT WYŚWIETLEŃ STRONY
     viewsRef.transaction((currentViews) => {
@@ -685,11 +753,27 @@
     // SPRAWDZENIE CZY UŻYTKOWNIK JUŻ KLIKAŁ
     if (localStorage.getItem(STORAGE_KEY)) {
       setLikedState();
+    } else {
+      // Pokaż dymek zachęcający po wejściu na stronę na 5 sekund
+      setTimeout(() => {
+        if (!localStorage.getItem(STORAGE_KEY)) {
+          likeTooltip.classList.add("show");
+          setTimeout(() => {
+            likeTooltip.classList.remove("show");
+          }, 5000);
+        }
+      }, 600);
     }
 
-    // 3. DODAWANIE POLUBIENIA
-    function addLike() {
+    // 3. DODAWANIE POLUBIENIA I SERCOWEGO KONFETTI
+    function addLike(event) {
       if (localStorage.getItem(STORAGE_KEY)) return;
+
+      // Ukryj natychmiast dymek
+      likeTooltip.classList.remove("show");
+
+      // Wystrzał konfetti nad serduszkiem
+      createHeartBurst(event);
 
       likesRef.transaction((currentLikes) => {
         return (currentLikes || 0) + 1;
@@ -706,7 +790,43 @@
       likeBtn.classList.add("liked");
       likeBtn.onclick = null;
     }
+
+    // FUNKCJA GENERUJĄCA EFEKT KONFETTI W BANNERZE
+    function createHeartBurst(event) {
+      const rect = headerEl.getBoundingClientRect();
+      const btnRect = event.target.getBoundingClientRect();
+
+      // Pozycja startowa cząsteczek wewnątrz nagłówka
+      const startX = btnRect.left - rect.left + btnRect.width / 2;
+      const startY = btnRect.top - rect.top + btnRect.height / 2;
+
+      const hearts = ['❤️', '🖤', '💖', '✨', '🤍'];
+
+      for (let i = 0; i < 15; i++) {
+        const particle = document.createElement('span');
+        particle.className = 'heart-particle';
+        particle.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+        
+        particle.style.left = startX + 'px';
+        particle.style.top = startY + 'px';
+
+        // Losowy kierunek wybuchu
+        const dx = (Math.random() - 0.5) * 160 + 'px';
+        const dy = -(Math.random() * 120 + 30) + 'px';
+        const rot = (Math.random() - 0.5) * 360 + 'deg';
+
+        particle.style.setProperty('--dx', dx);
+        particle.style.setProperty('--dy', dy);
+        particle.style.setProperty('--rot', rot);
+
+        headerEl.appendChild(particle);
+
+        // Usuń cząsteczkę z kodu HTML po zakończeniu animacji
+        setTimeout(() => {
+          particle.remove();
+        }, 1000);
+      }
+    }
   </script>
 </body>
 </html>
-
