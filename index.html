@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skvllr - Portfolio</title>
+  <style>
+    /* ZMIENNE KOLORÓW - DOMYŚLNIE JASNY MOTYW */
+    :root {
+      --bg-color: #ffffff;
+      --text-main: #121214;
+      --text-sub: #333336;
+      --text-muted: #55555e;
+      --border-color: #e1e1e6;
+      --card-bg: #f0f0f5;
+      --accent-color: #ab4848;
+    }
+
+    /* TRYB CIEMNY (DARK MODE) */
+    body.dark-mode {
+      --bg-color: #121214;
+      --text-main: #f0f0f5;
+      --text-sub: #c4c4cc;
+      --text-muted: #8d8d99;
+      --border-color: #29292e;
+      --card-bg: #1c1c21;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding-bottom: 20px;
+    }
+
+    /* HEADER Z TWOIM ZDJĘCIEM W TLE */
+    header {
+      width: 100%;
+      height: 200px;
+      background-image: url('img/banner.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      border-bottom: 2px solid var(--border-color);
+    }
+    header h1 {
+      font-size: 2.5rem;
+      letter-spacing: 4px;
+      color: #ffffff;
+      text-transform: uppercase;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+    header p {
+      font-size: 0.9rem;
+      color: #f0f0f0;
+      margin-top: 5px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    }
+
+    /* PRZYCISK SERDUSZKA */
+    .like-container {
+      position: absolute;
+      right: 20px;
+      bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .like-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .like-btn:hover {
+      transform: scale(1.2);
+    }
+    .like-btn.liked {
+      cursor: default;
+    }
+    .like-count {
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    /* KONTENER GŁÓWNY */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 20px 30px 20px;
+    }
+
+    /* PASEK Z PRZEŁĄCZNIKIEM MOTYWU POD BANNEREM */
+    .toolbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .theme-switch-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .theme-switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 24px;
+    }
+    .theme-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: var(--accent-color);
+    }
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    /* OPIS PROFILU */
+    .profile-section {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      margin-bottom: 50px;
+      align-items: start;
+    }
+    .profile-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+      cursor: help;
+    }
+
+    /* UKŁAD DWUKOLUMNOWY DLA TEKSTU */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 30px;
+      align-items: start;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .section-subtitle {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--text-main);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .info-block h2 {
+      font-size: 1.8rem;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .info-block p {
+      line-height: 1.5;
+      color: var(--text-sub);
+      font-size: 0.95rem;
+    }
+
+    /* EXPERIENCE TIMELINE */
+    .timeline-item {
+      margin-bottom: 12px;
+    }
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+    .timeline-date {
+      font-size: 0.82rem;
+      color: var(--accent-color);
+      font-weight: bold;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .timeline-title {
+      font-size: 0.92rem;
+      font-weight: bold;
+      color: var(--text-main);
+    }
+    .timeline-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    /* SKILLS */
+    .skills-icons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 5px;
+    }
+    .skill-item {
+      position: relative;
+      width: 45px;
+      height: 45px;
+      cursor: pointer;
+    }
+    .skill-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      transition: transform 0.2s ease;
+    }
+    .skill-item:hover img {
+      transform: scale(1.1);
+    }
+    .skill-item::after {
+      content: attr(data-name);
+      position: absolute;
+      bottom: -32px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #121214;
+      color: #ffffff;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      pointer-events: none;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .skill-item:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* CONTACT LIST */
+    .contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+    .contact-icon {
+      width: 18px;
+      height: 18px;
+      fill: var(--text-main);
+      flex-shrink: 0;
+    }
+
+    /* SIATKA PRAC (ARTWORK SHOWCASE) */
+    .section-title {
+      font-size: 1.4rem;
+      color: var(--text-main);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-left: 4px solid var(--accent-color);
+      padding-left: 10px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    /* KAFELEK PRACY */
+    .art-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--card-bg);
+      aspect-ratio: 3 / 4;
+      border: 1px solid var(--border-color);
+    }
+    .art-card img, 
+    .art-card video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* WYSUWANA NAKŁADKA (HOVER OVERLAY) */
+    .art-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(10, 10, 12, 0.95), rgba(10, 10, 12, 0.4), transparent);
+      padding: 20px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .art-card:hover .art-overlay {
+      transform: translateY(0);
+    }
+    .art-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #ffffff;
+    }
+    .art-meta {
+      font-size: 0.85rem;
+      color: #a8a8b3;
+    }
+    .art-tag {
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      width: fit-content;
+      font-weight: bold;
+    }
+    .tag-personal { background: #3b2342; color: #e1a6ff; }
+    .tag-commission { background: #233b42; color: #a6f3ff; }
+
+    /* FOOTER / COPYRIGHT */
+    footer {
+      text-align: center;
+      padding: 30px 20px 10px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER Z SERDUSZKIEM -->
+  <header>
+    <h1>PORTFOLIO</h1>
+    <p>SKVLLR • ARTIST & 2D ANIMATOR</p>
+
+    <div class="like-container">
+      <button class="like-btn" id="likeBtn" onclick="addLike()">🤍</button>
+      <span class="like-count" id="likeCount">0</span>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    <!-- PASEK PRZEŁĄCZNIKA MOTYWU (SUWAK) -->
+    <div class="toolbar">
+      <div class="theme-switch-wrapper">
+        <span>☀︎</span>
+        <label class="theme-switch" for="themeToggle">
+          <input type="checkbox" id="themeToggle" onchange="toggleTheme(this)">
+          <span class="slider"></span>
+        </label>
+        <span>☾</span>
+      </div>
+    </div>
+
+    <!-- OPIS PROFILU -->
+    <section class="profile-section">
+      <img src="img/AZRN_TRANSPARENT.png" alt="Skvllr's OC - Azerian" title="My OC - Azerian (Aze / Zeri)" class="profile-avatar" />
+      
+      <div class="profile-grid">
+        
+        <!-- LEWA KOLUMNA: HELLO -> EDUCATION -> CONTACT -->
+        <div class="column">
+          <div class="info-block">
+            <h2>Hello!</h2>
+            <p>I'm Skvllr, but you can call me Muwder. My strengths are 2D Digital Illustration and Frame-by-Frame Animation. I am open to freelance commissions, personal projects, and creative collaborations.</p>
+          </div>
+
+          <div class="info-block">
+            <h3 class="section-subtitle">Education</h3>
+            <p><strong>Self-Taught Artist</strong></p>
+            <p>Self-directed learning and continuous skill development in digital art and 2D animation.</p>
+          </div>
+
+          <div class="info-block">
+            <h3 class="section-subtitle">Contact</h3>
+            <div class="contact-list">
+              <!-- Discord -->
+              <div class="contact-item">
+                <svg class="contact-icon" viewBox="0 0 127.14 96.36">
+                  <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a73.57,73.57,0,0,0,64.32,0c.87.68,1.76,1.36,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.91-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,45.91,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,45.91,96.12,53,91.08,65.69,84.69,65.69Z"/>
+                </svg>
+                <span>skvllr</span>
+              </div>
+              <!-- Email -->
+              <div class="contact-item">
+                <svg class="contact-icon" viewBox="0 0 24 24">
+                  <path d="M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4M20,8L12,13L4,8V6L12,11L20,6V8Z"/>
+                </svg>
+                <span>the.skvllr@gmail.com</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRAWA KOLUMNA: SKILLS -> EXPERIENCE -->
+        <div class="column">
+          <div class="info-block">
+            <h3 class="section-subtitle">Skills</h3>
+            <div class="skills-icons">
+              <div class="skill-item" data-name="FireAlpaca">
+                <img src="https://yt3.googleusercontent.com/kBhwkVsPiGfZb8870LRj4YB3crC-fhxs8CHnc-3ZmAOGVRxQ7Yq0iEBoDpFyzndjuq-oSd95=s900-c-k-c0x00ffffff-no-rj" alt="FireAlpaca">
+              </div>
+              <div class="skill-item" data-name="FlipaClip">
+                <img src="https://pbs.twimg.com/profile_images/983797175846088709/FimjofMh.jpg" alt="FlipaClip">
+              </div>
+              <div class="skill-item" data-name="ibisPaint X">
+                <img src="https://i.pinimg.com/736x/66/fb/72/66fb72c44a7b547237f7a3bd7159a01c.jpg" alt="ibisPaint X">
+              </div>
+              <div class="skill-item" data-name="Krita">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDW2cjkYihXLmObFNO92NXWD-9ZtBg0ANv9mkNm5ycWQ&s=10" alt="Krita">
+              </div>
+              <div class="skill-item" data-name="Moho 14">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwLiykyEkevXJ-vJop5T6mYEDC0c_eLzGG7ze13UsC2zyILqCPwrr6oic&s=10" alt="Moho 14">
+              </div>
+            </div>
+          </div>
+
+          <div class="info-block">
+            <h3 class="section-subtitle">Experience</h3>
+            
+            <div class="timeline-item">
+              <span class="timeline-date">2016</span>
+              <div class="timeline-title">First Steps & Art Exhibitions</div>
+              <div class="timeline-desc">Assisted my grandfather at art exhibitions and sold my first pencil sketches.</div>
+            </div>
+
+            <div class="timeline-item">
+              <span class="timeline-date">2017</span>
+              <div class="timeline-title">Transition to Digital Art</div>
+              <div class="timeline-desc">Created digital art for friends to build core skills and master modern tools.</div>
+            </div>
+
+            <div class="timeline-item">
+              <span class="timeline-date">2018 – Present</span>
+              <div class="timeline-title">2D Animation & Pro Software</div>
+              <div class="timeline-desc">Expanded into frame-by-frame animation and advanced digital art software.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- GALERIA PRAC -->
+    <section>
+      <h3 class="section-title">Artwork Showcase</h3>
+      <div class="gallery-grid">
+
+        <!-- KAFELEK 1: RYSUNEK -->
+        <div class="art-card">
+          <img src="img/Knife.png" alt="Knife (Azerian & Ksewier)" />
+          <div class="art-overlay">
+            <span class="art-title">Knife (Azerian & Ksewier)</span>
+            <span class="art-meta">📅 Date: June 2026</span>
+            <span class="art-tag tag-personal">Personal Project</span>
+          </div>
+        </div>
+
+        <!-- KAFELEK 2: RYSUNEK -->
+        <div class="art-card">
+          <img src="img/Cross-threatning.png" alt="Cross Threatning (Azerian & Ksewier)" />
+          <div class="art-overlay">
+            <span class="art-title">Cross Threatning (Azerian & Ksewier)</span>
+            <span class="art-meta">📅 Date: August 2026</span>
+            <span class="art-tag tag-personal">Personal Project</span>
+          </div>
+        </div>
+
+        <!-- KAFELEK 3: RYSUNEK -->
+        <div class="art-card">
+          <img src="img/Billiard.png" alt="Billiard (Azerian & Ksewier)" />
+          <div class="art-overlay">
+            <span class="art-title">Billiard (Azerian & Ksewier)</span>
+            <span class="art-meta">📅 Date: May 2026</span>
+            <span class="art-tag tag-personal">Personal Project</span>
+          </div>
+        </div>
+
+        <!-- KAFELEK 4: RYSUNEK -->
+        <div class="art-card">
+          <img src="img/Przemokniety_korzen.png" alt="Waterlogged_Root" />
+          <div class="art-overlay">
+            <span class="art-title">Waterlogged Root (Warrior Cat)</span>
+            <span class="art-meta">📅 Date: November 2025</span>
+            <span class="art-tag tag-commission">Commission</span>
+          </div>
+        </div>
+
+        <!-- KAFELEK 5: RYSUNEK -->
+        <div class="art-card">
+          <img src="img/Springtrap-Scream_for_me.png" alt="Springtrap-Scream_for_me" />
+          <div class="art-overlay">
+            <span class="art-title">Springtrap Scream For Me (DBD/FNaF)</span>
+            <span class="art-meta">📅 Date: March 2026</span>
+            <span class="art-tag tag-personal">Personal Project</span>
+          </div>
+        </div>
+
+        <!-- KAFELEK 6: RYSUNEK -->
+        <div class="art-card">
+          <img src="img/fenix.png" alt="Fenix" />
+          <div class="art-overlay">
+            <span class="art-title">Fenix Bar</span>
+            <span class="art-meta">📅 Date: March 2026</span>
+            <span class="art-tag tag-commission">Comission</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- STOPKA Z COPYRIGHTEM -->
+  <footer>
+    <p>© All artworks displayed on this website belong to Skvllr. All rights reserved. Do not copy or redistribute without permission.</p>
+  </footer>
+
+  <!-- SKRYPTY (MOTYW + SERDUSZKA) -->
+<script>
+  // PRZEŁĄCZANIE MOTYWU (LIGHT / DARK)
+  function toggleTheme(checkbox) {
+    if (checkbox.checked) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }
+
+  // SYSTEM SERDUSZEK - BEZAWARYJNE COUNTERAPI
+  const NAMESPACE = "skvllr-art-portfolio-2026"; // Twój unikalny identyfikator
+  const KEY = "likes";
+  const STORAGE_KEY = "has_liked_skvllr_art";
+
+  const likeBtn = document.getElementById("likeBtn");
+  const likeCount = document.getElementById("likeCount");
+
+  // Pobieranie i automatyczne tworzenie licznika
+  async function fetchLikes() {
+    try {
+      let response = await fetch(`https://api.counterapi.dev/v1/${NAMESPACE}/${KEY}/`);
+      
+      // Jeśli licznik jeszcze nie istnieje (status 404/400), tworzymy go
+      if (!response.ok) {
+        response = await fetch(`https://api.counterapi.dev/v1/${NAMESPACE}/${KEY}/set?count=0`);
+      }
+
+      if (response.ok) {
+        const data = await response.json();
+        likeCount.innerText = data.count !== undefined ? data.count : (data.value || 0);
+      } else {
+        likeCount.innerText = "0";
+      }
+    } catch (e) {
+      console.error("Błąd sieciowy przy pobieraniu serduszek:", e);
+      likeCount.innerText = "0";
+    }
+
+    // Sprawdzamy czy użytkownik już klikał na tym urządzeniu/przeglądarce
+    if (localStorage.getItem(STORAGE_KEY)) {
+      setLikedState();
+    }
+  }
+
+  // Dodawanie serduszka (+1)
+  async function addLike() {
+    // Blokada ponownego kliknięcia w lokalnej pamięci
+    if (localStorage.getItem(STORAGE_KEY)) return;
+
+    try {
+      const response = await fetch(`https://api.counterapi.dev/v1/${NAMESPACE}/${KEY}/up`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        likeCount.innerText = data.count !== undefined ? data.count : data.value;
+        
+        // Zapisujemy w przeglądarce, że dany użytkownik oddał głos
+        localStorage.setItem(STORAGE_KEY, "true");
+        setLikedState();
+      }
+    } catch (e) {
+      console.error("Błąd sieciowy przy dodawaniu serduszka:", e);
+    }
+  }
+
+  function setLikedState() {
+    likeBtn.innerText = "❤️";
+    likeBtn.classList.add("liked");
+    likeBtn.onclick = null; // Wyłączamy zdarzenie kliknięcia
+  }
+
+  // Uruchomienie przy starcie strony
+  fetchLikes();
+</script>
+</body>
+</html>
