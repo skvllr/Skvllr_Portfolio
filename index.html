@@ -72,23 +72,28 @@
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
     }
 
-    /* PRZYCISK SERDUSZKA */
-    .like-container {
+    /* KONTENER STATYSTYK (SERDUSZKO + WYŚWIETLENIA) */
+    .stats-container {
       position: absolute;
       right: 20px;
       bottom: 15px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       background: rgba(0, 0, 0, 0.6);
       padding: 8px 15px;
       border-radius: 20px;
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
+    .stat-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .like-btn {
       background: none;
       border: none;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       cursor: pointer;
       transition: transform 0.2s ease;
     }
@@ -98,9 +103,14 @@
     .like-btn.liked {
       cursor: default;
     }
-    .like-count {
+    .stat-count {
       font-weight: bold;
       color: #ffffff;
+      font-size: 0.9rem;
+    }
+    .stat-divider {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.8rem;
     }
 
     /* KONTENER GŁÓWNY */
@@ -397,7 +407,7 @@
       header p {
         font-size: 0.8rem;
       }
-      .like-container {
+      .stats-container {
         right: 10px;
         bottom: 10px;
         padding: 5px 10px;
@@ -414,7 +424,6 @@
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 15px;
       }
-      /* Pokazuj opis prac na mobilkach bez najeżdżania myszką */
       .art-overlay {
         transform: translateY(0);
         background: rgba(10, 10, 12, 0.75);
@@ -425,14 +434,25 @@
 </head>
 <body>
 
-  <!-- HEADER Z SERDUSZKIEM -->
+  <!-- HEADER Z SERDUSZKIEM I LICZNIKIEM WYŚWIETLEŃ -->
   <header>
     <h1>PORTFOLIO</h1>
     <p>SKVLLR • ARTIST & 2D ANIMATOR</p>
 
-    <div class="like-container">
-      <button class="like-btn" id="likeBtn" onclick="addLike()">🤍</button>
-      <span class="like-count" id="likeCount">0</span>
+    <div class="stats-container">
+      <!-- WYŚWIETLENIA -->
+      <div class="stat-box" title="Total Page Views">
+        <span>👁️</span>
+        <span class="stat-count" id="viewCount">...</span>
+      </div>
+
+      <span class="stat-divider">|</span>
+
+      <!-- POLUBIENIA -->
+      <div class="stat-box" title="Likes">
+        <button class="like-btn" id="likeBtn" onclick="addLike()">🤍</button>
+        <span class="stat-count" id="likeCount">...</span>
+      </div>
     </div>
   </header>
 
@@ -544,7 +564,6 @@
       <h3 class="section-title">Artwork Showcase</h3>
       <div class="gallery-grid">
 
-        <!-- KAFELEK 1: RYSUNEK -->
         <div class="art-card">
           <img src="img/Knife.png" alt="Knife (Azerian & Ksewier)" />
           <div class="art-overlay">
@@ -554,7 +573,6 @@
           </div>
         </div>
 
-        <!-- KAFELEK 2: RYSUNEK -->
         <div class="art-card">
           <img src="img/Cross-threatning.png" alt="Cross Threatning (Azerian & Ksewier)" />
           <div class="art-overlay">
@@ -564,7 +582,6 @@
           </div>
         </div>
 
-        <!-- KAFELEK 3: RYSUNEK -->
         <div class="art-card">
           <img src="img/Billiard.png" alt="Billiard (Azerian & Ksewier)" />
           <div class="art-overlay">
@@ -574,7 +591,6 @@
           </div>
         </div>
 
-        <!-- KAFELEK 4: RYSUNEK -->
         <div class="art-card">
           <img src="img/Przemokniety_korzen.png" alt="Waterlogged_Root" />
           <div class="art-overlay">
@@ -584,7 +600,6 @@
           </div>
         </div>
 
-        <!-- KAFELEK 5: RYSUNEK -->
         <div class="art-card">
           <img src="img/Springtrap-Scream_for_me.png" alt="Springtrap-Scream_for_me" />
           <div class="art-overlay">
@@ -594,7 +609,6 @@
           </div>
         </div>
 
-        <!-- KAFELEK 6: RYSUNEK -->
         <div class="art-card">
           <img src="img/fenix.png" alt="Fenix" />
           <div class="art-overlay">
@@ -643,13 +657,26 @@
     // Inicjalizacja Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    
     const likesRef = db.ref('likes');
+    const viewsRef = db.ref('views');
 
     const STORAGE_KEY = "has_liked_skvllr_art";
     const likeBtn = document.getElementById("likeBtn");
     const likeCount = document.getElementById("likeCount");
+    const viewCount = document.getElementById("viewCount");
 
-    // ODCZYT POLUBIEŃ NA ŻYWO Z GOOGLE FIREBASE
+    // 1. ZWIĘKSZANIE I ODCZYT WYŚWIETLEŃ STRONY
+    viewsRef.transaction((currentViews) => {
+      return (currentViews || 0) + 1;
+    });
+
+    viewsRef.on('value', (snapshot) => {
+      const val = snapshot.val();
+      viewCount.innerText = val !== null ? val : 1;
+    });
+
+    // 2. ODCZYT POLUBIEŃ NA ŻYWO Z GOOGLE FIREBASE
     likesRef.on('value', (snapshot) => {
       const val = snapshot.val();
       likeCount.innerText = val !== null ? val : 0;
@@ -660,7 +687,7 @@
       setLikedState();
     }
 
-    // DODAWANIE POLUBIENIA
+    // 3. DODAWANIE POLUBIENIA
     function addLike() {
       if (localStorage.getItem(STORAGE_KEY)) return;
 
