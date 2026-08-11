@@ -55,6 +55,8 @@
       align-items: center;
       position: relative;
       border-bottom: 2px solid var(--border-color);
+      text-align: center;
+      padding: 0 15px;
     }
     header h1 {
       font-size: 2.5rem;
@@ -170,11 +172,13 @@
     }
     .profile-avatar {
       width: 100%;
-      height: 100%;
+      max-width: 280px;
+      height: auto;
       object-fit: cover;
       border-radius: 12px;
       display: block;
       cursor: help;
+      margin: 0 auto;
     }
 
     /* UKŁAD DWUKOLUMNOWY DLA TEKSTU */
@@ -317,7 +321,7 @@
     }
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
     }
 
@@ -383,6 +387,40 @@
       font-size: 0.8rem;
       color: var(--text-muted);
     }
+
+    /* RESPONSOWNOŚĆ (EKRANY MOBILNE) */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+      }
+      header p {
+        font-size: 0.8rem;
+      }
+      .like-container {
+        right: 10px;
+        bottom: 10px;
+        padding: 5px 10px;
+      }
+      .profile-section {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+      .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 15px;
+      }
+      /* Pokazuj opis prac na mobilkach bez najeżdżania myszką */
+      .art-overlay {
+        transform: translateY(0);
+        background: rgba(10, 10, 12, 0.75);
+        padding: 12px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -414,7 +452,7 @@
 
     <!-- OPIS PROFILU -->
     <section class="profile-section">
-      <img src="img/AZRN_TRANSPARENT.png" alt="Skvllr's OC - Azerian" title="My OC - Azerian (Aze / Zeri)" class="profile-avatar" />
+      <img src="img/AZRN_TRANSPARENT.png" alt="Skvllr's OC - Azerian" title="Azerian (Aze / Zeri)" class="profile-avatar" />
       
       <div class="profile-grid">
         
@@ -422,7 +460,7 @@
         <div class="column">
           <div class="info-block">
             <h2>Hello!</h2>
-            <p>I'm Skvllr, but you can call me Muwder. My strengths are 2D Digital Illustration and Frame-by-Frame Animation. I am open to freelance commissions, personal projects, and creative collaborations.</p>
+            <p>I'm Skvllr, but you can call me Muwder or Aze. My strengths are 2D Digital Illustration and Frame-by-Frame Animation. I am open to freelance commissions, personal projects, and creative collaborations.</p>
           </div>
 
           <div class="info-block">
@@ -577,70 +615,70 @@
   </footer>
 
   <!-- Biblioteki Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-<script>
-  // PRZEŁĄCZANIE MOTYWU (LIGHT / DARK)
-  function toggleTheme(checkbox) {
-    if (checkbox.checked) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-  }
-
-  // CONFIG FIREBASE (TWOJE DANE)
-  const firebaseConfig = {
-    apiKey: "AIzaSyBNBp-SFEWSfrexseHU6bBOsg1b5Hj5oAk",
-    authDomain: "skvllr-portfolio.firebaseapp.com",
-    databaseURL: "https://skvllr-portfolio-default-rtdb.firebaseio.com",
-    projectId: "skvllr-portfolio",
-    storageBucket: "skvllr-portfolio.firebasestorage.app",
-    messagingSenderId: "604962724103",
-    appId: "1:604962724103:web:412a3c4b723d7f2a5d0da2",
-    measurementId: "G-GLJTKPELRF"
-  };
-
-  // Inicjalizacja Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const likesRef = db.ref('likes');
-
-  const STORAGE_KEY = "has_liked_skvllr_art";
-  const likeBtn = document.getElementById("likeBtn");
-  const likeCount = document.getElementById("likeCount");
-
-  // ODCZYT POLUBIEŃ NA ŻYWO Z GOOGLE FIREBASE
-  likesRef.on('value', (snapshot) => {
-    const val = snapshot.val();
-    likeCount.innerText = val !== null ? val : 0;
-  });
-
-  // SPRAWDZENIE CZY UŻYTKOWNIK JUŻ KLIKAŁ
-  if (localStorage.getItem(STORAGE_KEY)) {
-    setLikedState();
-  }
-
-  // DODAWANIE POLUBIENIA
-  function addLike() {
-    if (localStorage.getItem(STORAGE_KEY)) return;
-
-    likesRef.transaction((currentLikes) => {
-      return (currentLikes || 0) + 1;
-    }, (error, committed) => {
-      if (committed) {
-        localStorage.setItem(STORAGE_KEY, "true");
-        setLikedState();
+  <script>
+    // PRZEŁĄCZANIE MOTYWU (LIGHT / DARK)
+    function toggleTheme(checkbox) {
+      if (checkbox.checked) {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
       }
-    });
-  }
+    }
 
-  function setLikedState() {
-    likeBtn.innerText = "❤️";
-    likeBtn.classList.add("liked");
-    likeBtn.onclick = null;
-  }
-</script>
+    // CONFIG FIREBASE (TWOJE DANE)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNBp-SFEWSfrexseHU6bBOsg1b5Hj5oAk",
+      authDomain: "skvllr-portfolio.firebaseapp.com",
+      databaseURL: "https://skvllr-portfolio-default-rtdb.firebaseio.com",
+      projectId: "skvllr-portfolio",
+      storageBucket: "skvllr-portfolio.firebasestorage.app",
+      messagingSenderId: "604962724103",
+      appId: "1:604962724103:web:412a3c4b723d7f2a5d0da2",
+      measurementId: "G-GLJTKPELRF"
+    };
+
+    // Inicjalizacja Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const likesRef = db.ref('likes');
+
+    const STORAGE_KEY = "has_liked_skvllr_art";
+    const likeBtn = document.getElementById("likeBtn");
+    const likeCount = document.getElementById("likeCount");
+
+    // ODCZYT POLUBIEŃ NA ŻYWO Z GOOGLE FIREBASE
+    likesRef.on('value', (snapshot) => {
+      const val = snapshot.val();
+      likeCount.innerText = val !== null ? val : 0;
+    });
+
+    // SPRAWDZENIE CZY UŻYTKOWNIK JUŻ KLIKAŁ
+    if (localStorage.getItem(STORAGE_KEY)) {
+      setLikedState();
+    }
+
+    // DODAWANIE POLUBIENIA
+    function addLike() {
+      if (localStorage.getItem(STORAGE_KEY)) return;
+
+      likesRef.transaction((currentLikes) => {
+        return (currentLikes || 0) + 1;
+      }, (error, committed) => {
+        if (committed) {
+          localStorage.setItem(STORAGE_KEY, "true");
+          setLikedState();
+        }
+      });
+    }
+
+    function setLikedState() {
+      likeBtn.innerText = "❤️";
+      likeBtn.classList.add("liked");
+      likeBtn.onclick = null;
+    }
+  </script>
 </body>
 </html>
