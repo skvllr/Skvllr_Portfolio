@@ -57,7 +57,6 @@
       border-bottom: 2px solid var(--border-color);
       text-align: center;
       padding: 0 15px;
-      overflow: hidden; /* Działa jako pojemnik na konfetti */
     }
     header h1 {
       font-size: 2.5rem;
@@ -73,7 +72,7 @@
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
     }
 
-    /* KONTENER SERDUSZKA W BANNERZE */
+    /* PRZYCISK SERDUSZKA */
     .like-container {
       position: absolute;
       right: 20px;
@@ -85,12 +84,11 @@
       padding: 8px 15px;
       border-radius: 20px;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      z-index: 2;
     }
     .like-btn {
       background: none;
       border: none;
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       cursor: pointer;
       transition: transform 0.2s ease;
     }
@@ -103,63 +101,6 @@
     .like-count {
       font-weight: bold;
       color: #ffffff;
-      font-size: 0.9rem;
-    }
-
-    /* DYMEK Z ZACHĘTĄ NAD SERDUSZKIEM */
-    .like-tooltip {
-      position: absolute;
-      bottom: 60px;
-      right: 20px;
-      background: rgba(18, 18, 20, 0.9);
-      color: #ffffff;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-      z-index: 3;
-    }
-    .like-tooltip::after {
-      content: '';
-      position: absolute;
-      bottom: -6px;
-      right: 20px;
-      width: 0;
-      height: 0;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 6px solid rgba(18, 18, 20, 0.9);
-    }
-    .like-tooltip.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* EFEKT CZĄSTECZEK (KONFETTI) SERDUSZEK */
-    .heart-particle {
-      position: absolute;
-      pointer-events: none;
-      font-size: 1rem;
-      user-select: none;
-      animation: floatUpAndFade 1s ease-out forwards;
-      z-index: 10;
-    }
-    @keyframes floatUpAndFade {
-      0% {
-        opacity: 1;
-        transform: translate(0, 0) scale(0.8) rotate(0deg);
-      }
-      100% {
-        opacity: 0;
-        transform: translate(var(--dx), var(--dy)) scale(1.4) rotate(var(--rot));
-      }
     }
 
     /* KONTENER GŁÓWNY */
@@ -169,24 +110,12 @@
       padding: 20px 20px 30px 20px;
     }
 
-    /* PASEK ZE ZMIANĄ MOTYWU I DYSKRETNYM LICZNIKIEM ODWIEDZIN */
+    /* PASEK Z PRZEŁĄCZNIKIEM MOTYWU POD BANNEREM */
     .toolbar {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       margin-bottom: 20px;
-    }
-    .view-count-wrapper {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      letter-spacing: 0.3px;
-    }
-    .view-count-icon {
-      font-size: 0.85rem;
-      opacity: 0.7;
     }
     .theme-switch-wrapper {
       display: flex;
@@ -250,6 +179,8 @@
       display: block;
       cursor: help;
       margin: 0 auto;
+      -webkit-user-drag: none;
+      user-select: none;
     }
 
     /* UKŁAD DWUKOLUMNOWY DLA TEKSTU */
@@ -329,6 +260,8 @@
       object-fit: contain;
       border-radius: 8px;
       transition: transform 0.2s ease;
+      -webkit-user-drag: none;
+      user-select: none;
     }
     .skill-item:hover img {
       transform: scale(1.1);
@@ -380,7 +313,7 @@
       flex-shrink: 0;
     }
 
-    /* SIATKA PRAC (ARTWORK SHOWCASE) */
+    /* NAGŁÓWKI SEKCJI */
     .section-title {
       font-size: 1.4rem;
       color: var(--text-main);
@@ -390,10 +323,13 @@
       border-left: 4px solid var(--accent-color);
       padding-left: 10px;
     }
+
+    /* SIATKA PRAC (ARTWORK SHOWCASE) */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
+      margin-bottom: 60px;
     }
 
     /* KAFELEK PRACY */
@@ -404,6 +340,7 @@
       background: var(--card-bg);
       aspect-ratio: 3 / 4;
       border: 1px solid var(--border-color);
+      cursor: pointer;
     }
     .art-card img, 
     .art-card video {
@@ -411,6 +348,9 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      -webkit-user-drag: none;
+      user-select: none;
+      pointer-events: none;
     }
 
     /* WYSUWANA NAKŁADKA (HOVER OVERLAY) */
@@ -427,9 +367,19 @@
       flex-direction: column;
       gap: 5px;
     }
-    .art-card:hover .art-overlay {
+
+    /* NA KOMPUTERZE: POKAZUJ PO NAJECHANIU MYSZKĄ */
+    @media (hover: hover) {
+      .art-card:hover .art-overlay {
+        transform: translateY(0);
+      }
+    }
+
+    /* NA EKRAŃE KLIKNIĘTYM / AKTYWNYM (KLASA ACTIVE DLA MOBILE) */
+    .art-card.active .art-overlay {
       transform: translateY(0);
     }
+
     .art-title {
       font-size: 1.1rem;
       font-weight: bold;
@@ -451,15 +401,283 @@
     .tag-personal { background: #3b2342; color: #e1a6ff; }
     .tag-commission { background: #233b42; color: #a6f3ff; }
 
+    /* SEKCJA COMMISSIONS */
+    .commissions-section {
+      margin-top: 20px;
+    }
+    .commissions-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    .commissions-intro {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      line-height: 1.5;
+      max-width: 650px;
+    }
+
+    /* IKONKI PŁATNOŚCI */
+    .payment-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .payment-title {
+      font-size: 0.8rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+    .payment-icons {
+      display: flex;
+      gap: 10px;
+    }
+    .payment-item {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+    }
+    .payment-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      transition: transform 0.2s ease;
+      -webkit-user-drag: none;
+      user-select: none;
+    }
+    .payment-item:hover img {
+      transform: scale(1.1);
+    }
+    .payment-item::after {
+      content: attr(data-name);
+      position: absolute;
+      bottom: -32px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #121214;
+      color: #ffffff;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      pointer-events: none;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .payment-item:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* UKŁAD TABEL (PRICELIST + DOS/DONTS) */
+    .commissions-tables-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+      align-items: start;
+      margin-bottom: 25px;
+    }
+
+    /* STYLIZACJA TABELI CENNIKA */
+    .price-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+    .custom-table th, 
+    .custom-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .custom-table th {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text-main);
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+    }
+    body.dark-mode .custom-table th {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .custom-table tr:last-child td {
+      border-bottom: none;
+    }
+    .custom-table td strong {
+      color: var(--accent-color);
+    }
+
+    /* SUWAK / PRZEŁĄCZNIK WALUT (CURRENCY SLIDER) */
+    .currency-selector-container {
+      margin-top: 15px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+    .currency-label {
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      letter-spacing: 0.5px;
+    }
+    .currency-slider-wrapper {
+      position: relative;
+      display: flex;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 3px;
+      width: 210px;
+      user-select: none;
+    }
+    .currency-slider-wrapper input[type="radio"] {
+      display: none;
+    }
+    .currency-option {
+      flex: 1;
+      text-align: center;
+      padding: 6px 0;
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: var(--text-muted);
+      cursor: pointer;
+      z-index: 2;
+      transition: color 0.3s ease;
+    }
+    .currency-slider-wrapper input[type="radio"]:checked + label {
+      color: #ffffff;
+    }
+    .currency-glider {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      height: calc(100% - 6px);
+      width: calc((100% - 6px) / 3);
+      background-color: var(--accent-color);
+      border-radius: 16px;
+      z-index: 1;
+      transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    #curr-eur:checked ~ .currency-glider {
+      transform: translateX(0%);
+    }
+    #curr-pln:checked ~ .currency-glider {
+      transform: translateX(100%);
+    }
+    #curr-usd:checked ~ .currency-glider {
+      transform: translateX(200%);
+    }
+
+    /* OTWARTY BLOK OPCJI DODATKOWYCH */
+    .extra-options-box {
+      margin-top: 15px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 0.88rem;
+    }
+    .extra-options-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .extra-options-list {
+      list-style: none;
+      color: var(--text-sub);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* STYLIZACJA TABELI DO'S & DON'TS */
+    .rules-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .rules-block {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 15px;
+    }
+    .rules-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rules-title.dos { color: #4CAF50; }
+    .rules-title.donts { color: var(--accent-color); }
+    
+    .rules-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .rules-list li {
+      font-size: 0.82rem;
+      background: var(--bg-color);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      font-weight: 500;
+    }
+
+    .custom-note-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
     /* FOOTER / COPYRIGHT */
     footer {
       text-align: center;
-      padding: 30px 20px 10px;
+      padding: 40px 20px 10px;
       font-size: 0.8rem;
       color: var(--text-muted);
     }
 
     /* RESPONSOWNOŚĆ (EKRANY MOBILNE) */
+    @media (max-width: 850px) {
+      .commissions-tables-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+    }
+
     @media (max-width: 768px) {
       header h1 {
         font-size: 1.8rem;
@@ -473,11 +691,6 @@
         bottom: 10px;
         padding: 5px 10px;
       }
-      .like-tooltip {
-        right: 10px;
-        bottom: 50px;
-        font-size: 0.7rem;
-      }
       .profile-section {
         grid-template-columns: 1fr;
         gap: 25px;
@@ -489,43 +702,39 @@
       .gallery-grid {
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 15px;
+        margin-bottom: 40px;
       }
       .art-overlay {
-        transform: translateY(0);
-        background: rgba(10, 10, 12, 0.75);
+        background: rgba(10, 10, 12, 0.85);
         padding: 12px;
+      }
+      .commissions-top {
+        flex-direction: column;
+      }
+      .currency-selector-container {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER Z SERDUSZKIEM I DYMKIEM INFROMACYJNYM -->
-  <header id="header">
+  <!-- HEADER Z SERDUSZKIEM -->
+  <header>
     <h1>PORTFOLIO</h1>
     <p>SKVLLR • ARTIST & 2D ANIMATOR</p>
 
-    <!-- DYMEK INFROMACYJNY NAD SERCEM -->
-    <div class="like-tooltip" id="likeTooltip">
-      drop a heart if u like my art! ♡
-    </div>
-
-    <!-- PRZYCISK SERDUSZKA -->
-    <div class="like-container" id="likeContainer">
-      <button class="like-btn" id="likeBtn" onclick="addLike(event)">🤍</button>
-      <span class="like-count" id="likeCount">...</span>
+    <div class="like-container">
+      <button class="like-btn" id="likeBtn" onclick="addLike()">🤍</button>
+      <span class="like-count" id="likeCount">0</span>
     </div>
   </header>
 
   <div class="container">
     
-    <!-- PASEK TOOLBAR: LICZNIK ODWIEDZIN PO LEWEJ + PRZEŁĄCZNIK MOTYWU PO PRAWEJ -->
+    <!-- PASEK PRZEŁĄCZNIKA MOTYWU (SUWAK) -->
     <div class="toolbar">
-      <div class="view-count-wrapper" title="Total Page Views">
-        <span class="view-count-icon">👁</span>
-        <span id="viewCount">...</span> views
-      </div>
-
       <div class="theme-switch-wrapper">
         <span>☀︎</span>
         <label class="theme-switch" for="themeToggle">
@@ -630,7 +839,7 @@
       <h3 class="section-title">Artwork Showcase</h3>
       <div class="gallery-grid">
 
-        <div class="art-card">
+        <div class="art-card" onclick="toggleArtCard(this)">
           <img src="img/Knife.png" alt="Knife (Azerian & Ksewier)" />
           <div class="art-overlay">
             <span class="art-title">Knife (Azerian & Ksewier)</span>
@@ -639,7 +848,7 @@
           </div>
         </div>
 
-        <div class="art-card">
+        <div class="art-card" onclick="toggleArtCard(this)">
           <img src="img/Cross-threatning.png" alt="Cross Threatning (Azerian & Ksewier)" />
           <div class="art-overlay">
             <span class="art-title">Cross Threatning (Azerian & Ksewier)</span>
@@ -648,7 +857,7 @@
           </div>
         </div>
 
-        <div class="art-card">
+        <div class="art-card" onclick="toggleArtCard(this)">
           <img src="img/Billiard.png" alt="Billiard (Azerian & Ksewier)" />
           <div class="art-overlay">
             <span class="art-title">Billiard (Azerian & Ksewier)</span>
@@ -657,7 +866,7 @@
           </div>
         </div>
 
-        <div class="art-card">
+        <div class="art-card" onclick="toggleArtCard(this)">
           <img src="img/Przemokniety_korzen.png" alt="Waterlogged_Root" />
           <div class="art-overlay">
             <span class="art-title">Waterlogged Root (Warrior Cat)</span>
@@ -666,7 +875,7 @@
           </div>
         </div>
 
-        <div class="art-card">
+        <div class="art-card" onclick="toggleArtCard(this)">
           <img src="img/Springtrap-Scream_for_me.png" alt="Springtrap-Scream_for_me" />
           <div class="art-overlay">
             <span class="art-title">Springtrap Scream For Me (DBD/FNaF)</span>
@@ -675,7 +884,7 @@
           </div>
         </div>
 
-        <div class="art-card">
+        <div class="art-card" onclick="toggleArtCard(this)">
           <img src="img/fenix.png" alt="Fenix" />
           <div class="art-overlay">
             <span class="art-title">Fenix Bar</span>
@@ -685,6 +894,145 @@
         </div>
 
       </div>
+    </section>
+
+    <!-- SEKCJA COMMISSIONS & PRICING -->
+    <section class="commissions-section">
+      <h3 class="section-title">Commissions</h3>
+      
+      <div class="commissions-top">
+        <p class="commissions-intro">
+          If you'd like to order a commission, contact me directly using any of my contact methods listed above.
+        </p>
+
+        <!-- IKONKI METOD PŁATNOŚCI -->
+        <div class="payment-methods">
+          <span class="payment-title">Accepted Payments:</span>
+          <div class="payment-icons">
+            <div class="payment-item" data-name="PayPal">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+            </div>
+            <div class="payment-item" data-name="BLIK">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Blik_logo.jpg?utm_source=pl.wikipedia.org&utm_campaign=index&utm_content=original" alt="BLIK">
+            </div>
+            <div class="payment-item" data-name="Bank Transfer">
+              <img src="https://cdn-icons-png.flaticon.com/512/8043/8043733.png" alt="Bank Transfer">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIATKA TABEL -->
+      <div class="commissions-tables-grid">
+        
+        <!-- KONTENER TABELI + SUWAKA WALUT -->
+        <div>
+          <!-- TABELA Z CENNIKIEM -->
+          <div class="price-table-wrapper">
+            <table class="custom-table" id="priceTable">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Sketch</th>
+                  <th>Lineart</th>
+                  <th>Flat Color</th>
+                  <th>Rendered</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Bust (Headshot)</strong></td>
+                  <td data-pln="5"></td>
+                  <td data-pln="8"></td>
+                  <td data-pln="10"></td>
+                  <td data-pln="15"></td>
+                </tr>
+                <tr>
+                  <td><strong>Half Body</strong></td>
+                  <td data-pln="8"></td>
+                  <td data-pln="10"></td>
+                  <td data-pln="15"></td>
+                  <td data-pln="20"></td>
+                </tr>
+                <tr>
+                  <td><strong>Full Body</strong></td>
+                  <td data-pln="10"></td>
+                  <td data-pln="12"></td>
+                  <td data-pln="18"></td>
+                  <td data-pln="25"></td>
+                </tr>
+                <tr>
+                  <td><strong>Chibi / Emotes</strong></td>
+                  <td data-pln="3"></td>
+                  <td data-pln="5"></td>
+                  <td data-pln="8"></td>
+                  <td data-pln="10"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- SUWAK WYBORU WALUTY POD TABELKĄ -->
+          <div class="currency-selector-container">
+            <span class="currency-label">Select Currency:</span>
+            <div class="currency-slider-wrapper">
+              <input type="radio" id="curr-eur" name="currency" value="EUR" checked onchange="updatePrices('EUR')">
+              <label for="curr-eur" class="currency-option">EUR (€)</label>
+
+              <input type="radio" id="curr-pln" name="currency" value="PLN" onchange="updatePrices('PLN')">
+              <label for="curr-pln" class="currency-option">PLN (zł)</label>
+
+              <input type="radio" id="curr-usd" name="currency" value="USD" onchange="updatePrices('USD')">
+              <label for="curr-usd" class="currency-option">USD ($)</label>
+
+              <div class="currency-glider"></div>
+            </div>
+          </div>
+
+          <!-- OPCJE DODATKOWE -->
+          <div class="extra-options-box">
+            <div class="extra-options-title">🎨 Additional Options:</div>
+            <ul class="extra-options-list">
+              <li><strong>Extra Character:</strong> +50% of the base price</li>
+              <li><strong>Background:</strong> Simple / Solid / Gradient — Free (Gratis)</li>
+              <li><strong>Complex Background:</strong> <span id="bg-price-range">10 - 30 PLN</span> (depending on difficulty)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- TABELA DO'S & DON'TS -->
+        <div class="rules-container">
+          <div class="rules-block">
+            <div class="rules-title dos">✓ Will Draw</div>
+            <ul class="rules-list">
+              <li>OC's</li>
+              <li>Fanart</li>
+              <li>Furry</li>
+              <li>Ships</li>
+              <li>Soft Gore</li>
+              <li>Gore</li>
+              <li>NSFW</li>
+            </ul>
+          </div>
+
+          <div class="rules-block">
+            <div class="rules-title donts">✕ Won't Draw</div>
+            <ul class="rules-list">
+              <li>Mecha</li>
+              <li>Vehicles</li>
+              <li>Proship</li>
+              <li>Political</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- LUŹNA INFORMACJA O CUSTOMACH -->
+      <p class="custom-note-text">
+        Looking for something else like logos, custom backgrounds, 2D animations, or custom requests not listed in the table? Just message me directly and we can negotiate the details and price!
+      </p>
+
     </section>
 
   </div>
@@ -699,6 +1047,11 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
+    // PRZEŁĄCZANIE OPISU ARTWORKU PO KLIKNIĘCIU (SZCZEGÓLNIE NA MOBILACH)
+    function toggleArtCard(card) {
+      card.classList.toggle('active');
+    }
+
     // PRZEŁĄCZANIE MOTYWU (LIGHT / DARK)
     function toggleTheme(checkbox) {
       if (checkbox.checked) {
@@ -707,6 +1060,55 @@
         document.body.classList.remove('dark-mode');
       }
     }
+
+    // PRZELICZNIK I AKTUALIZACJA WALUT (DOMYŚLNIE EURO)
+    const exchangeRates = {
+      PLN: { rate: 1, symbol: 'PLN', suffix: true },
+      EUR: { rate: 0.23, symbol: '€', suffix: false },
+      USD: { rate: 0.25, symbol: '$', suffix: false }
+    };
+
+    function updatePrices(currency) {
+      const config = exchangeRates[currency];
+      const cells = document.querySelectorAll('#priceTable tbody td[data-pln]');
+
+      cells.forEach(cell => {
+        const plnValue = parseFloat(cell.getAttribute('data-pln'));
+        if (currency === 'PLN') {
+          cell.innerText = `${plnValue} PLN`;
+        } else {
+          const converted = (plnValue * config.rate).toFixed(2);
+          cell.innerText = config.suffix ? `${converted} ${config.symbol}` : `${config.symbol}${converted}`;
+        }
+      });
+
+      // Aktualizacja zakresu cen skomplikowanego tła
+      const bgMinPLN = 10;
+      const bgMaxPLN = 30;
+      const bgRangeElement = document.getElementById('bg-price-range');
+
+      if (currency === 'PLN') {
+        bgRangeElement.innerText = `${bgMinPLN} - ${bgMaxPLN} PLN`;
+      } else {
+        const minConverted = (bgMinPLN * config.rate).toFixed(2);
+        const maxConverted = (bgMaxPLN * config.rate).toFixed(2);
+        bgRangeElement.innerText = config.suffix 
+          ? `${minConverted} - ${maxConverted} ${config.symbol}` 
+          : `${config.symbol}${minConverted} - ${config.symbol}${maxConverted}`;
+      }
+    }
+
+    // Uruchomienie domyślnej waluty (EUR) przy załadowaniu strony
+    document.addEventListener("DOMContentLoaded", function() {
+      updatePrices('EUR');
+    });
+
+    // BLOKADA KLIKANIA PRAWEGO PRZYCISKU DLA GRAFIK
+    document.addEventListener('contextmenu', function(event) {
+      if (event.target.tagName === 'IMG' || event.target.tagName === 'VIDEO') {
+        event.preventDefault();
+      }
+    });
 
     // CONFIG FIREBASE (TWOJE DANE)
     const firebaseConfig = {
@@ -723,28 +1125,13 @@
     // Inicjalizacja Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    
     const likesRef = db.ref('likes');
-    const viewsRef = db.ref('views');
 
     const STORAGE_KEY = "has_liked_skvllr_art";
     const likeBtn = document.getElementById("likeBtn");
     const likeCount = document.getElementById("likeCount");
-    const viewCount = document.getElementById("viewCount");
-    const likeTooltip = document.getElementById("likeTooltip");
-    const headerEl = document.getElementById("header");
 
-    // 1. ZWIĘKSZANIE I ODCZYT WYŚWIETLEŃ STRONY
-    viewsRef.transaction((currentViews) => {
-      return (currentViews || 0) + 1;
-    });
-
-    viewsRef.on('value', (snapshot) => {
-      const val = snapshot.val();
-      viewCount.innerText = val !== null ? val : 1;
-    });
-
-    // 2. ODCZYT POLUBIEŃ NA ŻYWO Z GOOGLE FIREBASE
+    // ODCZYT POLUBIEŃ NA ŻYWO Z GOOGLE FIREBASE
     likesRef.on('value', (snapshot) => {
       const val = snapshot.val();
       likeCount.innerText = val !== null ? val : 0;
@@ -753,27 +1140,11 @@
     // SPRAWDZENIE CZY UŻYTKOWNIK JUŻ KLIKAŁ
     if (localStorage.getItem(STORAGE_KEY)) {
       setLikedState();
-    } else {
-      // Pokaż dymek zachęcający po wejściu na stronę na 5 sekund
-      setTimeout(() => {
-        if (!localStorage.getItem(STORAGE_KEY)) {
-          likeTooltip.classList.add("show");
-          setTimeout(() => {
-            likeTooltip.classList.remove("show");
-          }, 5000);
-        }
-      }, 600);
     }
 
-    // 3. DODAWANIE POLUBIENIA I SERCOWEGO KONFETTI
-    function addLike(event) {
+    // DODAWANIE POLUBIENIA
+    function addLike() {
       if (localStorage.getItem(STORAGE_KEY)) return;
-
-      // Ukryj natychmiast dymek
-      likeTooltip.classList.remove("show");
-
-      // Wystrzał konfetti nad serduszkiem
-      createHeartBurst(event);
 
       likesRef.transaction((currentLikes) => {
         return (currentLikes || 0) + 1;
@@ -789,43 +1160,6 @@
       likeBtn.innerText = "❤️";
       likeBtn.classList.add("liked");
       likeBtn.onclick = null;
-    }
-
-    // FUNKCJA GENERUJĄCA EFEKT KONFETTI W BANNERZE
-    function createHeartBurst(event) {
-      const rect = headerEl.getBoundingClientRect();
-      const btnRect = event.target.getBoundingClientRect();
-
-      // Pozycja startowa cząsteczek wewnątrz nagłówka
-      const startX = btnRect.left - rect.left + btnRect.width / 2;
-      const startY = btnRect.top - rect.top + btnRect.height / 2;
-
-      const hearts = ['❤️', '🖤', '💖', '✨', '🤍'];
-
-      for (let i = 0; i < 15; i++) {
-        const particle = document.createElement('span');
-        particle.className = 'heart-particle';
-        particle.innerText = hearts[Math.floor(Math.random() * hearts.length)];
-        
-        particle.style.left = startX + 'px';
-        particle.style.top = startY + 'px';
-
-        // Losowy kierunek wybuchu
-        const dx = (Math.random() - 0.5) * 160 + 'px';
-        const dy = -(Math.random() * 120 + 30) + 'px';
-        const rot = (Math.random() - 0.5) * 360 + 'deg';
-
-        particle.style.setProperty('--dx', dx);
-        particle.style.setProperty('--dy', dy);
-        particle.style.setProperty('--rot', rot);
-
-        headerEl.appendChild(particle);
-
-        // Usuń cząsteczkę z kodu HTML po zakończeniu animacji
-        setTimeout(() => {
-          particle.remove();
-        }, 1000);
-      }
     }
   </script>
 </body>
