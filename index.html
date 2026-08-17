@@ -353,35 +353,36 @@
       pointer-events: none;
     }
 
-    /* WYSUWANA NAKŁADKA (HOVER OVERLAY) */
+    /* CZARNY PRZEZROCZYSTY PASEK (OVERLAY) */
     .art-overlay {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      background: linear-gradient(to top, rgba(10, 10, 12, 0.95), rgba(10, 10, 12, 0.4), transparent);
-      padding: 20px;
-      transform: translateY(100%);
+      background: rgba(10, 10, 12, 0.85); /* CZARNE PRZEZROCZYSTE TŁO */
+      padding: 16px;
+      transform: translateY(100%); /* DOMYŚLNIE UKRYTY POD KRAWĘDZIĄ */
       transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
       display: flex;
       flex-direction: column;
       gap: 5px;
+      backdrop-filter: blur(4px); /* LEKKIE ROZMYCIE POD TŁEM DLA LEPSZEJ CZYTELNOŚCI */
     }
 
-    /* NA KOMPUTERZE: POKAZUJ PO NAJECHANIU MYSZKĄ */
+    /* KOMPUTER: WYSUNIĘCIE PO NAJECHANIU MYSZKĄ */
     @media (hover: hover) {
       .art-card:hover .art-overlay {
         transform: translateY(0);
       }
     }
 
-    /* NA EKRAŃE KLIKNIĘTYM / AKTYWNYM (KLASA ACTIVE DLA MOBILE) */
+    /* TELEFON: WYSUNIĘCIE PO KLIKNIĘCIU (KLASA ACTIVE) */
     .art-card.active .art-overlay {
       transform: translateY(0);
     }
 
     .art-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: bold;
       color: #ffffff;
     }
@@ -704,10 +705,6 @@
         gap: 15px;
         margin-bottom: 40px;
       }
-      .art-overlay {
-        background: rgba(10, 10, 12, 0.85);
-        padding: 12px;
-      }
       .commissions-top {
         flex-direction: column;
       }
@@ -958,7 +955,7 @@
                   <td><strong>Full Body</strong></td>
                   <td data-pln="10"></td>
                   <td data-pln="12"></td>
-                  <td data-pln="18"></td>
+                  <td data-pln="15"></td>
                   <td data-pln="25"></td>
                 </tr>
                 <tr>
@@ -1047,7 +1044,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    // PRZEŁĄCZANIE OPISU ARTWORKU PO KLIKNIĘCIU (SZCZEGÓLNIE NA MOBILACH)
+    // PRZEŁĄCZANIE OPISU ARTWORKU PO KLIKNIĘCIU (MOBILNE)
     function toggleArtCard(card) {
       card.classList.toggle('active');
     }
