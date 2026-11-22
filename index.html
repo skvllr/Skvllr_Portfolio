@@ -60,6 +60,12 @@ html,body{height:100%;overflow:hidden}.desktop{height:calc(100vh - 30px);max-hei
   .content{min-height:0}
 }
 
+
+/* Mobile quick-navigation tap fix */
+@media(max-width:650px){
+  .quick-links{position:relative;z-index:20;pointer-events:auto}
+  .quick-links .action{position:relative;z-index:21;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+}
 </style></head>
 <body>
 <div class="cursor" id="cursor"></div><div class="cursor-dot" id="cursorDot"></div>
@@ -128,7 +134,7 @@ const DISCORD_USER_ID = '1150405982028042263';
 const navButtons=[...document.querySelectorAll('.nav button')];
 function showPage(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===name));navButtons.forEach(b=>b.classList.toggle('active',b.dataset.page===name));document.querySelector('.content').scrollTo({top:0,behavior:'smooth'});}
 navButtons.forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
-document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.go)));
+document.addEventListener('click',event=>{const button=event.target.closest('button[data-go]');if(button){event.preventDefault();showPage(button.dataset.go);}},true);
 // Shared heart counter — Firebase Realtime Database (same project as the old portfolio).
 const firebaseConfig = {
   apiKey: "AIzaSyBNBp-SFEWSfrexseHU6bBOsg1b5Hj5oAk",
