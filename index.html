@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#100e10"><meta name="description" content="Illustration portfolio and commission archive.">
+<link rel="icon" type="image/svg+xml" href="assets/skvllr-favicon.svg">
 <title>SKVLLR - Artist Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
@@ -38,6 +39,26 @@ html,body{height:100%;overflow:hidden}.desktop{height:calc(100vh - 30px);max-hei
 .server-note{display:flex;align-items:center;gap:17px;margin-top:17px;padding:17px 19px;background:linear-gradient(110deg,#21171b,#171416);border:1px solid #594047}.server-note-mark{flex:0 0 44px;height:44px;display:grid;place-items:center;border:1px solid #8b535a;border-radius:50%;color:var(--gold);font-size:20px}.server-note-copy{flex:1;min-width:0}.server-note h3{font:600 19px var(--serif);margin:5px 0}.server-note p{font-size:10px;line-height:1.75;color:#b8acad;margin:0;max-width:760px}.server-invite{white-space:nowrap;text-decoration:none;opacity:.65;cursor:not-allowed}.server-placeholder{color:var(--gold);text-decoration:none;opacity:.75;cursor:default}
 .art-window-backdrop{display:none;position:fixed;inset:0;z-index:11000;pointer-events:none}.art-window-backdrop.open{display:block}.art-window{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(850px,90vw);height:auto;max-height:88vh;display:flex;flex-direction:column;background:#151214;border:1px solid #94616a;box-shadow:0 24px 90px #000e,0 0 0 1px #26191d;pointer-events:auto;resize:none;overflow:hidden}.art-window-bar{height:38px;flex:0 0 38px;display:flex;align-items:center;gap:12px;padding:0 10px;background:#241b1f;border-bottom:1px solid #65434a;cursor:grab;user-select:none;font:9px var(--mono);letter-spacing:1px;color:#cbbabb}.art-window-bar:active{cursor:grabbing}.window-traffic{display:flex;gap:5px}.window-traffic i{width:8px;height:8px;border-radius:50%;background:#77363d}.window-traffic i:nth-child(2){background:#9a8051}.window-traffic i:nth-child(3){background:#536d5a}.art-window-bar>span{flex:1;text-align:center}.window-close{width:25px;height:25px;border:1px solid #68444a;background:#351f24;color:#e9d9d7;font-size:19px;line-height:1;cursor:pointer}.window-close:hover{background:#78343d}.art-window-body{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px;background:#100e10;min-height:130px;overflow:hidden}.art-image-stage{flex:1;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}.art-image-stage img{display:block;width:auto;height:auto;max-width:100%;max-height:calc(88vh - 105px);object-fit:contain}.art-arrow{flex:0 0 34px;width:34px;height:44px;background:#21181c;border:1px solid #5b3a40;color:#d4b477;font:26px var(--serif);cursor:pointer}.art-arrow:hover{background:#43242b}.art-arrow:disabled{opacity:.2;cursor:default}.art-window-foot{height:29px;flex:0 0 29px;display:flex;align-items:center;justify-content:space-between;padding:0 13px;border-top:1px solid #453238;background:#1b1618;color:#bca8a9;font:8px var(--mono);letter-spacing:1px}.art-window-foot span:last-child{color:var(--gold)}
 @media(max-width:650px){.server-note{align-items:flex-start;flex-wrap:wrap}.server-note-copy{flex-basis:calc(100% - 65px)}.server-invite{margin-left:61px}.art-window{width:calc(100vw - 18px);max-height:90vh}.art-window-body{gap:5px;padding:7px}.art-arrow{flex-basis:27px;width:27px}.art-image-stage img{max-height:calc(90vh - 100px)}}
+
+
+
+/* SKVLLR responsive viewport refinements */
+@media (max-aspect-ratio: 4/5) and (min-width: 651px){
+  html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+  .desktop{height:auto;min-height:calc(100dvh - 40px);max-height:none;margin:20px auto;overflow:hidden}
+  .content{flex:1 0 auto;min-height:calc(100dvh - 330px);overflow:visible}
+  .home-grid{grid-template-columns:minmax(155px, .72fr) minmax(0,1.5fr)}
+  .side-stack{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .portfolio-layout{grid-template-columns:minmax(0,1fr) minmax(210px,.55fr)}
+  .gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+  .heart-box{flex-direction:column;align-items:stretch}
+  .heart-button{align-self:flex-start}
+  .heart-feedback{position:static;margin:0}
+  .desktop{width:calc(100% - 12px);margin:6px auto}
+  .content{min-height:0}
+}
 
 </style></head>
 <body>
@@ -100,19 +121,89 @@ html,body{height:100%;overflow:hidden}.desktop{height:calc(100vh - 30px);max-hei
   <footer class="art-window-foot"><span id="artStepLabel">FINAL ARTWORK</span><span id="artStepCount">01 / 01</span></footer>
  </section>
 </div>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script>
 const DISCORD_USER_ID = '1150405982028042263';
 const navButtons=[...document.querySelectorAll('.nav button')];
 function showPage(name){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===name));navButtons.forEach(b=>b.classList.toggle('active',b.dataset.page===name));document.querySelector('.content').scrollTo({top:0,behavior:'smooth'});}
 navButtons.forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.go)));
-// Heart reaction: one vote per browser profile, persisted locally. A shared public total requires a connected backend.
-const heartKey='skvllr-heart-v1';
-const heartBtn=document.getElementById('heartBtn'), heartCount=document.getElementById('heartCount'), heartLabel=document.getElementById('heartLabel'), heartFeedback=document.getElementById('heartFeedback');
-let heartTotal=Number(localStorage.getItem('skvllr-heart-total')||0), hasHeart=localStorage.getItem(heartKey)==='yes';
-function renderHeart(){heartCount.textContent=heartTotal.toLocaleString();heartBtn.classList.toggle('hearted',hasHeart);heartLabel.textContent=hasHeart?'Heart left':'Leave a heart';heartBtn.disabled=hasHeart;}
-function burstHearts(){const rect=heartBtn.getBoundingClientRect();for(let i=0;i<14;i++){const particle=document.createElement('span');particle.className='heart-particle';particle.textContent=['♥','✦','♡'][i%3];particle.style.left=(rect.left+rect.width/2)+'px';particle.style.top=(rect.top+rect.height/2)+'px';particle.style.setProperty('--dx',(Math.random()*150-75)+'px');particle.style.setProperty('--dy',(-35-Math.random()*115)+'px');document.body.appendChild(particle);setTimeout(()=>particle.remove(),1100);}}
-heartBtn.addEventListener('click',()=>{if(hasHeart)return;hasHeart=true;heartTotal+=1;localStorage.setItem(heartKey,'yes');localStorage.setItem('skvllr-heart-total',String(heartTotal));renderHeart();burstHearts();heartFeedback.textContent='Thank you for leaving a little love here. ♥';});renderHeart();
+// Shared heart counter — Firebase Realtime Database (same project as the old portfolio).
+const firebaseConfig = {
+  apiKey: "AIzaSyBNBp-SFEWSfrexseHU6bBOsg1b5Hj5oAk",
+  authDomain: "skvllr-portfolio.firebaseapp.com",
+  databaseURL: "https://skvllr-portfolio-default-rtdb.firebaseio.com",
+  projectId: "skvllr-portfolio",
+  storageBucket: "skvllr-portfolio.firebasestorage.app",
+  messagingSenderId: "604962724103",
+  appId: "1:604962724103:web:412a3c4b723d7f2a5d0da2",
+  measurementId: "G-GLJTKPELRF"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const likesRef = db.ref('likes');
+const STORAGE_KEY = 'has_liked_skvllr_art';
+const likeBtn = document.getElementById('heartBtn');
+const likeCount = document.getElementById('heartCount');
+const heartLabel = document.getElementById('heartLabel');
+const heartFeedback = document.getElementById('heartFeedback');
+
+function setLikedState() {
+  likeBtn.classList.add('hearted');
+  likeBtn.classList.add('liked');
+  likeBtn.disabled = true;
+  heartLabel.textContent = 'Heart left';
+  likeBtn.setAttribute('aria-label', 'You have already left a heart');
+}
+function burstHearts() {
+  const rect = likeBtn.getBoundingClientRect();
+  for (let i = 0; i < 14; i++) {
+    const particle = document.createElement('span');
+    particle.className = 'heart-particle';
+    particle.textContent = ['♥', '✦', '♡'][i % 3];
+    particle.style.left = (rect.left + rect.width / 2) + 'px';
+    particle.style.top = (rect.top + rect.height / 2) + 'px';
+    particle.style.setProperty('--dx', (Math.random() * 150 - 75) + 'px');
+    particle.style.setProperty('--dy', (-35 - Math.random() * 115) + 'px');
+    document.body.appendChild(particle);
+    setTimeout(() => particle.remove(), 1100);
+  }
+}
+
+// Listen to the one shared Firebase value: every visitor sees the same total live.
+likesRef.on('value', snapshot => {
+  const value = snapshot.val();
+  likeCount.textContent = (value !== null ? Number(value) : 0).toLocaleString();
+}, error => {
+  console.error('Firebase heart counter:', error);
+  heartFeedback.textContent = 'The shared heart counter could not connect. Check Firebase database rules.';
+});
+
+if (localStorage.getItem(STORAGE_KEY)) {
+  setLikedState();
+  heartFeedback.textContent = 'Thank you — your heart is already included. ♥';
+}
+
+likeBtn.addEventListener('click', () => {
+  if (localStorage.getItem(STORAGE_KEY)) return;
+  likeBtn.disabled = true;
+  heartLabel.textContent = 'Sending…';
+  // transaction prevents simultaneous visitors from overwriting one another's increments.
+  likesRef.transaction(current => (Number(current) || 0) + 1, (error, committed) => {
+    if (error || !committed) {
+      likeBtn.disabled = false;
+      heartLabel.textContent = 'Leave a heart';
+      heartFeedback.textContent = 'Could not save your heart. Please try again.';
+      console.error(error);
+      return;
+    }
+    localStorage.setItem(STORAGE_KEY, 'true');
+    setLikedState();
+    burstHearts();
+    heartFeedback.textContent = 'Thank you for leaving a little love here. ♥';
+  });
+});
 
 // Gallery artwork sets: arrows browse the available stages of each individual piece.
 const artworkSets=[
